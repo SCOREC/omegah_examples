@@ -86,7 +86,7 @@ Create a new source file from an existing one:
 
 ```
 cd omegah_examples
-cp firstOrderAdjacency.cpp foo.cpp
+cp adjacencies.cpp foo.cpp
 ```
 
 Add the new file to the build and test system cmake files:
