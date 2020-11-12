@@ -1,6 +1,8 @@
 #include <Omega_h_file.hpp>
 #include <Omega_h_build.hpp>
 #include <Omega_h_mark.hpp>
+
+#define create_mesh false//set this if you want to build mesh
 using namespace Omega_h;
 
 int main(int argc, char** argv) {
@@ -10,14 +12,22 @@ int main(int argc, char** argv) {
     return 0;
   }
   const auto inmesh = argv[1];
-/*  auto mesh = build_box(
-		        lib.world(), OMEGA_H_HYPERCUBE, 1.0, 1.0, 1.0, 8, 8, 3);
-  binary::write("/users/joshia5/omegah_examples_serial/meshes/hypercube.osh", &mesh);
-  mesh = binary::read("/users/joshia5/omegah_examples_serial/meshes/hypercube.osh", lib.world());
-  vtk::write_vtu("/users/joshia5/new_mesh/hypercube.vtu", &mesh);
-*/
   Mesh mesh(&lib);
-  binary::read(inmesh, lib.world(), &mesh);
+
+  if (create_mesh) {
+    mesh = build_box(
+		        lib.world(), OMEGA_H_HYPERCUBE, 1.0, 1.0, 1.0, 8, 8, 3);
+    binary::write(
+      "/space/joshia5/ohExamplesTest/omegah_examples/meshes/hypercube.osh",
+      &mesh);
+    mesh = binary::read(
+      "/space/joshia5/ohExamplesTest/omegah_examples/meshes/hypercube.osh",
+      lib.world());
+  }
+  else {
+    binary::read(inmesh, lib.world(), &mesh);
+  }
+
   const auto dim = mesh.dim();
 
   //Test common API calls
