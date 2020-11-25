@@ -1,6 +1,11 @@
 #include <Omega_h_file.hpp>
 #include <Omega_h_library.hpp>
 #include <Omega_h_mesh.hpp>
+#include <Omega_h_for.hpp>
+//#include <Omega_h_adj.hpp>
+//#include "Omega_h_element.hpp"
+#include "Omega_h_shape.hpp"
+
 using namespace	std;
 using namespace	Omega_h;
 
@@ -16,6 +21,34 @@ int main(int argc, char** argv) {
   binary::read(inmesh, lib.world(), &mesh);
   const auto dim = mesh.dim();
 
+  auto elems2verts = mesh.ask_elem_verts();
+  auto vert_coords = mesh.coords();
+  vert_coords[0];
+  
+  auto lamb = OMEGA_H_LAMBDA(LO i) {
+    /*if (dim == 1) {
+      auto vertIndices = gather_verts<2>(elems2verts,i);
+      auto vertCoords = gather_vectors<2,3>(coords, vertIndices);
+    }
+    else if (dim == 2) {*/
+    // auto coords = mesh.coords();
+    auto vertIndices = gather_verts<3>(elems2verts,i);
+    //auto vertCoords = gather_vectors<3,3>(coords, vertIndices);   
+      // double centroid[] = {0,0,0};
+      // vertCoords[simplex_down_template(3, 0, 0, 0)];
+     // for (int j = 0; j < 3; j++) {
+       // for (int k = 0; k < 3; k++) {
+          //centroid[k] += vertCoords[j][k];
+        //} 
+      //}   
+    /*}
+    else {
+      auto vertIndices = gather_verts<4>(elems2verts,i);
+      auto vertCoords = gather_vectors<4,3>(coords, vertIndices);
+    }*/
+  };
+  parallel_for(mesh.nelems(),lamb,"parallel_Try_1");
+  /*
   if(!rank) {
     fprintf(stderr, "mesh <v e f r> %d %d %d %d\n",
         mesh.nglobal_ents(0),
@@ -54,6 +87,6 @@ int main(int argc, char** argv) {
 
   auto vert2vert = mesh.ask_star(0);
   assert(vert2vert.ab2b.size() == 2*n_edge);
-  // counts each edge twice, once from each vertex
+  // counts each edge twice, once from each vertex*/
   return 0;
 }
