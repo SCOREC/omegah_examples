@@ -8,15 +8,71 @@ The following instructions apply to the SCOREC RedHat 7 systems with NVIDIA
 GPUs.  Specific instructions are given for Pascal GPUs (e.g., in the `blockade` and
 `pachisi` systems).
 
-## dependencies
 
-First build the dependencies for execution with the Kokkos backend using CUDA.
 
-Kokkos:
-https://github.com/SCOREC/pumi-pic/wiki/Building-and-Running-on-SCOREC-RHEL7#kokkos
+```
+#### setup
+mkdir ohExamplesTest
+cd ohExamplesTest
+export root=$PWD # This is the directory containing the kokkos and omega_h repos as subdirs
+module load gcc mpich cmake
+function getname() {
+  name=$1
+  buildSuffix=blockade-cuda
+  echo "build-${name}-${buildSuffix}"
+}
+export kk=$root/`getname kokkos`/install   # This is where kokkos will be (or is) installed
+export oh=$root/`getname omegah`/install  # This is where omega_h will be (or is) installed
+export pumipic=$root/`getname pumipic`/install # This is where PumiPIC will be (or is) installed
+module load cuda/10.1
+export LD_LIBRARY_PATH=$cuda/lib64:$LD_LIBRARY_PATH
+export CMAKE_PREFIX_PATH=$engpar:$kk:$oh:$CMAKE_PREFIX_PATH
+export MPICH_CXX=$root/kokkos/bin/nvcc_wrapper
+#### end setup
 
-Omega_h:
-https://github.com/SCOREC/pumi-pic/wiki/Building-and-Running-on-SCOREC-RHEL7#omega_h
+cd $root
+git clone git@github.com:kokkos/kokkos.git
+cd kokkos
+git checkout 2.9.00
+cd -
+mkdir -p $kk
+cd $_/..
+cmake ../kokkos -DCMAKE_CXX_COMPILER=$root/kokkos/bin/nvcc_wrapper \
+-DCMAKE_CXX_FLAGS= -DKOKKOS_ARCH=Turing75 \
+-DKOKKOS_ENABLE_SERIAL=ON -DKOKKOS_ENABLE_OPENMP=off -DKOKKOS_ENABLE_CUDA=on \
+-DKOKKOS_ENABLE_CUDA_LAMBDA=on -DKOKKOS_ENABLE_DEBUG=on \
+-DKOKKOS_ENABLE_PROFILING=on -DCMAKE_INSTALL_PREFIX=$kk
+make install -j8
+
+cd $root
+#waiting on PR https://github.com/SNLComputation/omega_h/pull/360
+git clone -b balance_debug git@github.com:joshia5/omega_h.git
+cd omega_h
+cd -
+mkdir -p $oh
+cd $_/..
+cmake ../omega_h/ -DCMAKE_INSTALL_PREFIX=$oh -DBUILD_SHARED_LIBS=OFF -DOmega_h_USE_CUDA=on -DOmega_h_CUDA_ARCH=sm_75 -DOmega_h_USE_MPI=on -DCMAKE_CXX_COMPILER=`which mpicxx` -DOmega_h_USE_Kokkos=ON -DKokkos_PREFIX=$kk/lib/CMake/
+make install -j8 # this takes a few minutes
+
+cd $root
+git clone git@github.com:SCOREC/omegah_examples.git
+mkdir build-ohExamples-cuda
+cd !$
+cmake ../omegah_examples -DCMAKE_CXX_COMPILER=mpicxx
+make
+```
+
+To resume work:
+
+```
+ssh blockade
+cd ohExamplesTest
+### run the commands between `### setup` and `### end setup` then:
+cd build-ohExamples-cuda
+make
+```
+
+## debug build with serial backend
 
 Alternatively, for debugging purposes you can build Omega_h in serial without kokkos:
 
@@ -24,34 +80,7 @@ https://github.com/SCOREC/pumi-pic/wiki/Building-and-Running-on-SCOREC-RHEL7#bui
 
 Note, you'll still need to set `export oh=/path/to/omega_h/install` accordingly for the `omegah_examples` build.
 
-## omegah_examples - cuda build
-
-Setup the environment.
-
-```
-module load cuda/10.1 gcc mpich cmake 
-# use the environment variable set in the omega_h build
-export CMAKE_PREFIX_PATH=$oh:$CMAKE_PREFIX_PATH
-export MPICH_CXX=$kksrc/bin/nvcc_wrapper
-```
-
-Clone the repo, run cmake, then build.
-
-```
-git clone git@github.com:SCOREC/omegah_examples.git
-mkdir build-ohExamples-pascal
-cd !$
-cmake ../omegah_examples -DCMAKE_CXX_COMPILER=mpicxx
-make
-```
-
-Run `ctest` to run the examples:
-
-```
-ctest
-```
-
-## omegah_examples - serial build
+### omegah_examples - serial build
 
 Setup the environment.
 
