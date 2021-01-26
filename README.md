@@ -24,7 +24,7 @@ function getname() {
 export kk=$root/`getname kokkos`/install   # This is where kokkos will be (or is) installed
 export oh=$root/`getname omegah`/install  # This is where omega_h will be (or is) installed
 export pumipic=$root/`getname pumipic`/install # This is where PumiPIC will be (or is) installed
-module load cuda/10.1
+module load cuda/10.2
 export LD_LIBRARY_PATH=$cuda/lib64:$LD_LIBRARY_PATH
 export CMAKE_PREFIX_PATH=$engpar:$kk:$oh:$CMAKE_PREFIX_PATH
 export MPICH_CXX=$root/kokkos/bin/nvcc_wrapper
