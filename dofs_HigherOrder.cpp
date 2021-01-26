@@ -234,7 +234,7 @@ Read<Real> createTetrahedrons(Mesh& mesh, LO dim, LO order) {
   Read<Real> tetDOFs(tetDOFs_w);
   return tetDOFs;
 }
-
+/*
 Read<Real> interpolateMiddle(Mesh& mesh, LO dim, LO order, Read<Real>& vertD,
 Read<Real>& edgeD, Read<Real>& trigD, Read<Real>& tetD) {
   LO numElems = mesh.nelems();
@@ -278,7 +278,7 @@ Read<Real>& edgeD, Read<Real>& trigD, Read<Real>& tetD) {
     auto edgeDOFs = gather_vertors<3>
   }
 
-}
+}*/
 
 int main(int argc, char** argv) {
   auto lib = Omega_h::Library(&argc, &argv);
