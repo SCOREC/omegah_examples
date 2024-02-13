@@ -45,8 +45,7 @@ cmake ../kokkos -DCMAKE_CXX_COMPILER=$root/kokkos/bin/nvcc_wrapper \
 make install -j8
 
 cd $root
-#waiting on PR https://github.com/SNLComputation/omega_h/pull/360
-git clone -b balance_debug git@github.com:joshia5/omega_h.git
+git clone git@github.com:SCOREC/omega_h.git
 cd omega_h
 cd -
 mkdir -p $oh
