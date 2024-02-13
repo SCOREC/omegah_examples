@@ -151,7 +151,7 @@ ctest
 - Classification - A direct mapping from mesh entities to geometric (CAD) model entities
 
 ## Outline
-We aim to develop functions or tests which will aid in mesh operations and other common related tasks, using the functionalities and API of Omega_h. Tests are developed for adjacency queries, modifying data related to mesh entities, calculation of barycentric coordinates, reverse classification and data reduction in parallel. More tests focusing on parallel execution like synchronizing data on process boundary, mesh-repartitioning and creating ghost elements are in the pipeline. More details can be found below.
+We aim to develop functions or tests which will aid in mesh operations and other common related tasks, using the functionalities and API of Omega_h. Tests are developed for adjacency queries, modifying data related to mesh entities, calculation of barycentric coordinates, reverse classification and data reduction in parallel. More examples focusing on parallel execution like synchronizing data on process boundary, mesh-repartitioning and creating ghost elements are desired. Details of the current examples can be found below.
 
 ## Summary
 Following tests, which require the mesh file as an input, are developed:
